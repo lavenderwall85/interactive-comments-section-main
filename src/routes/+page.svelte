@@ -1,27 +1,59 @@
+<script>
+  import { writable } from 'svelte/store';
+  
+  // Store para almacenar los comentarios
+  const comments = writable([
+    { id: 1, user: 'amyrobson', content: 'This is amazing!', votes: 12, deleted: false, isEditing: false },
+  ]);
+
+  function vote(id, type) {
+    comments.update(c => {
+      const comment = c.find(c => c.id === id);
+      if (comment) {
+        if (type === "up") {
+          comment.votes += 1;
+        } else {
+          comment.votes -= 1;
+        }
+      }
+      return [...c];
+    });
+  }
+
+
+</script>
+
 <div class="comments-list">
+  {#each $comments as comment (comment.id)}
   <div class="comment">
     <!-- Botón de Responder al lado derecho -->
     <button class="reply-button">Reply</button>
 
-    <!-- Botones de Votación -->
-    <div class="vote-buttons">
-      <button>-</button>
-      <span>0</span>
-      <button>+</button>
-    </div>
+        <!-- Botones de Votación -->
+        <div class="vote-buttons">
+          <button on:click={() => vote(comment.id, "down")}>-</button>
+          <span>{comment.votes}</span>
+          <button on:click={() => vote(comment.id, "up")}>+</button>
+        </div>
+
 
     <div>
       <div class="comment-header">
         <span><strong>Username</strong></span>
       </div>
-      <p>Comment content</p>
+      <p style="color: rgba(107, 114, 128, 1);">Impressive! Though it seems the drag feature could be improved. But overall it looks incredible. You've nailed the design and the responsiveness at various breakpoints works really well.</p>
       <button>Edit</button>
       <button>Delete</button>
     </div>
+   
   </div>
+  {/each}
 </div>
 
 <style>
+  :global(body){
+    background: #e8e8e8;
+  }
   .comments-list {
     max-width: 600px;
     margin: 0 auto;
@@ -29,10 +61,11 @@
   }
 
   .comment {
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border-width: 1px;
+    border-color: rgba(219, 234, 254, 1);
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 1);
+    padding: 1rem;
     display: flex;
     justify-content: flex-start;
     position: relative;
