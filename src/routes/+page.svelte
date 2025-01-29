@@ -6,6 +6,7 @@
     { id: 1, user: 'amyrobson', content: 'This is amazing!', votes: 12, deleted: false, isEditing: false },
   ]);
 
+  // Función para manejar votos positivos/negativos
   function vote(id, type) {
     comments.update(c => {
       const comment = c.find(c => c.id === id);
@@ -15,6 +16,18 @@
         } else {
           comment.votes -= 1;
         }
+      }
+      return [...c];
+    });
+  }
+
+  // Función para iniciar el modo de edición
+  function startEdit(id) {
+    comments.update(c => {
+      const comment = c.find(c => c.id === id);
+      if (comment) {
+        comment.isEditing = true;
+        comment.tempContent = comment.content; 
       }
       return [...c];
     });
@@ -37,14 +50,21 @@
         </div>
 
 
-    <div>
-      <div class="comment-header">
-        <span><strong>Username</strong></span>
-      </div>
-      <p style="color: rgba(107, 114, 128, 1);">Impressive! Though it seems the drag feature could be improved. But overall it looks incredible. You've nailed the design and the responsiveness at various breakpoints works really well.</p>
-      <button>Edit</button>
-      <button>Delete</button>
-    </div>
+        <div>
+          <div class="comment-header">
+            <span><strong>{comment.user}</strong></span>
+          </div>
+
+          {#if comment.isEditing}
+            <textarea bind:value={comment.tempContent}></textarea>
+            <button>Save</button>
+            <button>Cancel</button>
+          {:else}
+            <p>{comment.content}</p>
+            <button on:click={() => startEdit(comment.id)}>Edit</button>
+            <button on:click={() => deleteComment(comment.id)}>Delete</button>
+          {/if}
+        </div>
    
   </div>
   {/each}
