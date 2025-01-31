@@ -45,6 +45,29 @@
     });
   }
 
+    // Función para cancelar la edición
+    function cancelEdit(id) {
+    comments.update(c => {
+      const comment = c.find(c => c.id === id);
+      if (comment) {
+        comment.isEditing = false; 
+      }
+      return [...c];
+    });
+  }
+
+    // Función para eliminar un comentario
+    function deleteComment(id) {
+    comments.update(c => {
+      const comment = c.find(c => c.id === id);
+      if (comment) {
+        comment.deleted = true; 
+      }
+      return [...c];
+    });
+  }
+
+
 
 
 </script>
@@ -53,7 +76,7 @@
   {#each $comments as comment (comment.id)}
   <div class="comment">
     <!-- Botón de Responder al lado derecho -->
-    <button class="reply-button">Reply</button>
+    <button class="reply-button" on:click={() => replyToComment(comment.id)}>Reply</button>
 
         <!-- Botones de Votación -->
         <div class="vote-buttons">
@@ -71,7 +94,7 @@
           {#if comment.isEditing}
             <textarea bind:value={comment.tempContent}></textarea>
             <button on:click={()=> saveEdit(comment.id)}>Save</button>
-            <button>Cancel</button>
+            <button on:click={() => cancelEdit(comment.id)}>Cancel</button>
           {:else}
             <p>{comment.content}</p>
             <button on:click={() => startEdit(comment.id)}>Edit</button>
