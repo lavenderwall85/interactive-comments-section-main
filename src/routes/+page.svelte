@@ -33,6 +33,19 @@
     });
   }
 
+    // Función para guardar los cambios después de editar
+    function saveEdit(id) {
+    comments.update(c => {
+      const comment = c.find(c => c.id === id);
+      if (comment) {
+        comment.content = comment.tempContent; 
+        comment.isEditing = false; 
+      }
+      return [...c];
+    });
+  }
+
+
 
 </script>
 
@@ -57,7 +70,7 @@
 
           {#if comment.isEditing}
             <textarea bind:value={comment.tempContent}></textarea>
-            <button>Save</button>
+            <button on:click={()=> saveEdit(comment.id)}>Save</button>
             <button>Cancel</button>
           {:else}
             <p>{comment.content}</p>
