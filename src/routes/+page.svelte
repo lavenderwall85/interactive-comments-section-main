@@ -66,14 +66,11 @@
       return [...c];
     });
   }
-
-
-
-
 </script>
 
 <div class="comments-list">
   {#each $comments as comment (comment.id)}
+{#if !comment.deleted}
   <div class="comment">
     <!-- Botón de Responder al lado derecho -->
     <button class="reply-button" on:click={() => replyToComment(comment.id)}>Reply</button>
@@ -101,8 +98,11 @@
             <button on:click={() => deleteComment(comment.id)}>Delete</button>
           {/if}
         </div>
-   
+       
   </div>
+  {:else}
+  <p class="deleted">Comment deleted</p>
+{/if}
   {/each}
 </div>
 
