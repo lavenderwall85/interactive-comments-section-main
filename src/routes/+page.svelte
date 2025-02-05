@@ -4,7 +4,10 @@
   // Store para almacenar los comentarios
   const comments = writable([
     { id: 1, user: 'amyrobson', content: 'This is amazing!', votes: 12, deleted: false, isEditing: false },
+    { id: 2, user: 'maxblagun', content: 'Great work!', votes: 5, deleted: false, isEditing: false },
   ]);
+
+  let replyText = "";
 
   // Función para manejar votos positivos/negativos
   function vote(id, type) {
@@ -66,6 +69,31 @@
       return [...c];
     });
   }
+
+  function replyToComment(id) { 
+    comments.update(c => {
+      return c.map(comment => {
+        if (comment.id === id) {
+          comment.replying = true; 
+        }
+        return comment;
+      });
+    });
+}
+
+function submitReply(id) {
+    if (replyText.trim() !== "") {
+      comments.update(c => {
+        return [...c, 
+          { id: Date.now(), user: 'You', content: replyText, votes: 0, deleted: false, isEditing: false } 
+        ];
+      });
+      replyText = ""; 
+    }
+}
+
+
+
 </script>
 
 <div class="comments-list">
@@ -100,6 +128,12 @@
         </div>
        
   </div>
+  {#if comment.replying}
+  <div class="reply-box">
+    <input type="text" bind:value={replyText} placeholder="Write a reply..." />
+    <button on:click={() => submitReply(comment.id)}>Submit</button>
+  </div>
+{/if}
   {:else}
   <p class="deleted">Comment deleted</p>
 {/if}
