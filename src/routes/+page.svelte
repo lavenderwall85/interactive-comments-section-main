@@ -70,29 +70,27 @@
     });
   }
 
-  function replyToComment(id) { 
+
+  function replyToComment(id) {
     comments.update(c => {
       return c.map(comment => {
         if (comment.id === id) {
-          comment.replying = true; 
+          comment.replying = !comment.replying;
         }
         return comment;
       });
     });
-}
+  }
 
-function submitReply(id) {
+  function submitReply(id) {
     if (replyText.trim() !== "") {
       comments.update(c => {
-        return [...c, 
-          { id: Date.now(), user: 'You', content: replyText, votes: 0, deleted: false, isEditing: false } 
-        ];
+        c.push({ id: Date.now(), user: 'You', content: replyText, votes: 0, deleted: false, isEditing: false, replying: false });
+        replyText = "";
+        return [...c];
       });
-      replyText = ""; 
     }
-}
-
-
+  }
 
 </script>
 
